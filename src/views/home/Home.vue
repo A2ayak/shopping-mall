@@ -96,12 +96,10 @@
       console.log('destyoyed');
     },
     activated() {
-      console.log('oooo');
       this.$refs.scrollComp.scrollTo(0, this.saveY, 0)
     },
     deactivated() {
       this.saveY = this.$refs.scrollComp.getScrollY();
-      console.log(this.saveY)
     },
 
     methods: {
@@ -147,7 +145,8 @@
       getHomeGoods(type) {
         const page = this.goods[type].page + 1;
         getHomeGoods(type, page).then(res => {
-          this.goods[type].list.push(...res.data.list);
+          const goodsList = res.data.list;
+          this.goods[type].list.push(...goodsList);
           this.goods[type].page += 1;
           this.$refs.scrollComp.oFinishPullUp();
         })
