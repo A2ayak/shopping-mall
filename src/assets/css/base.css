@@ -1,0 +1,55 @@
+@import "./normalize.css";
+
+/* :root 伪类，匹配文档根元素
+    在html中，根元素始终是HTML元素 */
+:root {    /* 定义变量 */
+  --color-text: #666;
+  --color-high-text: #ff5777;
+  --color-tint: #ff8198; /* tint表示整体的背景颜色 */
+  --color-background: #fff;
+  --font-size: 14px;
+  --line-height: 1.5;
+}
+
+/* ::before, ::after 伪元素用于在元素的内容前后插入新内容 */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvatica, "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+  user-select: none; /* 禁止用于鼠标在页面上选中文字/图片等 */
+  -webkit-tap-highlight-color: transparent; /* webkit是safari的核 */
+  background: var(--color-background);
+  width: 100vw; /* vw 视口单位 视口宽度的1% ，类似的还有vh(高度) vmin/vmax是前面两者中较小/较大的那个 */
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.clear-fix::after {
+  clear: both;
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.clear-fix {
+  zoom: 1;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
