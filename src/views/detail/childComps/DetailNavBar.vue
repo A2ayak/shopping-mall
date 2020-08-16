@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <nav-bar>
+    <nav-bar class="detail-nav-bar">
       <div slot="left" @click="backClick" class="back">
         <img src="~assets/img/common/back.svg" alt="">
       </div>
@@ -13,7 +12,6 @@
         </div>
       </div>
     </nav-bar>
-  </div>
 </template>
 
 <script>
@@ -42,6 +40,11 @@
 </script>
 
 <style scoped>
+  .detail-nav-bar {
+    position: relative;
+    z-index: 9;
+    background-color: #fff;
+  }
   .detail-title {
     display: flex;
   }

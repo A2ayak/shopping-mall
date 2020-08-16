@@ -88,7 +88,8 @@
     },
     mounted() {
       const oRefresh = debounce(this.$refs.scrollComp.oRefresh, 100);
-      this.$bus.$on('itemImageLoad', () => {
+      this.$bus.$on('homeItemImageLoad', () => {
+        // console.log('homeimageload');
         oRefresh()
       })
     },
@@ -96,7 +97,8 @@
       console.log('destyoyed');
     },
     activated() {
-      this.$refs.scrollComp.scrollTo(0, this.saveY, 0)
+      this.$refs.scrollComp.scrollTo(0, this.saveY, 0);
+      this.$refs.scrollComp.oRefresh()
     },
     deactivated() {
       this.saveY = this.$refs.scrollComp.getScrollY();
