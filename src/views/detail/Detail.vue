@@ -1,16 +1,21 @@
 <template>
   <div class="main-detail">
-    <detail-nav-bar/>
-    <scroll class="detail-content" :probe-type="3" ref="scrollComp">
+    <detail-nav-bar @itemClick="titleClick" ref="nav"/>
+    <scroll class="detail-content"
+            :probe-type="3"
+            ref="scrollComp" @scroll="contentScroll">
+<!--      <div>{{$store.state.cartList.length}}</div>-->
       <detail-swiper :detail-images="topImages"/>
-      <detail-base-info :goods="goods"/>
+      <detail-base-info :goods="goods" />
       <detail-shop-info :shop="shop"/>
-      <detail-goods-info :detail-info="detailInfo"/>
-      <detail-param-info :param-info="itemParams"/>
-      <detail-comment-info :comment-info="commentInfo"/>
+      <detail-goods-info :detail-info="detailInfo" ref="goodsInfo"/>
+      <detail-param-info :param-info="itemParams" ref="paramsInfo"/>
+      <detail-comment-info :comment-info="commentInfo" ref="commentInfo"/>
 <!--      <detail-recommend-info :recommend-list="recommendInfo"/>-->
-      <goods-list :goods="recommendInfo"/>
+      <goods-list :goods="recommendInfo" ref="recommendInfo"/>
     </scroll>
+    <back-top @click.native="backClick" v-show="isBackTopShow"/>
+    <detail-bottom-bar @selected="addToStore"/>
   </div>
 </template>
 
@@ -24,6 +29,8 @@
   import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
   import DetailParamInfo from "./childComps/DetailParamInfo";
   import DetailCommentInfo from "./childComps/DetailCommentInfo";
+  import DetailBottomBar from "./childComps/DetailBottomBar";
+  import BackTop from "components/content/backTop/BackTop";
   // import DetailRecommendInfo from "./childComps/DetailRecommendInfo";
   import GoodsList from "components/content/goods/GoodsList";
   import {debounce} from '@/common/utils';
@@ -43,7 +50,9 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
-      // DetailRecommendInfo
+      DetailBottomBar,
+
+      BackTop,
       GoodsList
 
     },
@@ -57,6 +66,9 @@
         itemParams: {},
         commentInfo: {},
         recommendInfo: [],
+        themeTops: [],
+        getTopY: null,
+        isBackTopShow: false,
 
         itemImageListener: null,
         newRefresh: null
@@ -92,11 +104,65 @@
       this.newRefresh = debounce(this.$refs.scrollComp.oRefresh, 300);
       this.itemImageListener = () => {
         this.newRefresh()
-        // console.log('homeimageload');
+        this.getTopY()  //imageLoad之后获取每个地方的Y值
+        // console.log('detailimageload');
       }
       this.$bus.$on('detailItemImageLoad', this.itemImageListener)
         // console.log('homeimageload');
+      // this.itemImageListener
     },
+    updated() {
+      // this.getOffsetTops()
+      this.getTopY = debounce(() => {
+        this.getOffsetTops()
+      }, 500)
+    },
+    methods: {
+      titleClick(index) {
+        this.$refs.scrollComp.scrollTo(0, -this.themeTops[index], 300)
+      },
+      getOffsetTops() {
+        if(this.$refs.paramsInfo && this.$refs.commentInfo && this.$refs.recommendInfo){
+          this.themeTops = []
+          this.themeTops.push(0)
+          this.themeTops.push(this.$refs.paramsInfo.$el.offsetTop)
+          this.themeTops.push(this.$refs.commentInfo.$el.offsetTop)
+          this.themeTops.push(this.$refs.recommendInfo.$el.offsetTop)
+          this.themeTops.push(Number.MAX_VALUE)
+          // console.log('‘溜了溜了’');
+        }
+      },
+      contentScroll(position) {
+        //完成滑动距离与标题联动
+        this.isBackTopShow = (-position.y) > 5; //滚动控制返回顶部图标是否出现
+        let posY = -position.y
+        for(let i = 0; i < this.themeTops.length-1; i++){
+          // let layer = this.themeTops[i]
+          if(posY >= this.themeTops[i] && posY <= this.themeTops[i+1]){
+            if(this.currentIndex !== i) {
+              this.currentIndex = i;
+              // console.log(this.currentIndex);
+              this.$refs.nav.currentIndex = this.currentIndex;
+            }
+          }
+        }
+      },
+      backClick() {
+        this.$refs.scrollComp.scrollTo(0, 0, 500)
+      },
+      addToStore() {
+        // console.log('sjdj ');
+        const selectedGoods = {}
+        // 2.对象信息
+        selectedGoods.iid = this.iid;
+        selectedGoods.imgURL = this.topImages[0]
+        selectedGoods.title = this.goods.title
+        selectedGoods.desc = this.goods.desc;
+        selectedGoods.newPrice = this.goods.nowPrice;
+        // 3.添加到Store中
+        this.$store.dispatch('addCart', selectedGoods)
+      }
+    }
   }
 </script>
 
@@ -109,6 +175,6 @@
   }
   .detail-content {
     background-color: #fff;
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 49px);
   }
 </style>

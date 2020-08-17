@@ -10,6 +10,8 @@
 </template>
 
 <script>
+  import {debounce} from "../../../common/utils";
+
   export default {
     name: "GoodsListItem",
     props: {
@@ -33,6 +35,8 @@
           this.$bus.$emit('homeItemImageLoad')
           // console.log('home');
         }else if (this.$route.path.indexOf("/detail") != -1){
+          // debounce( this.$bus.$emit('detailItemImageLoad'), 500)
+
           this.$bus.$emit('detailItemImageLoad')
           // console.log('detail');
         }

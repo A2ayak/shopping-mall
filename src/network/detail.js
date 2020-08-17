@@ -1,5 +1,5 @@
 import {request} from "./request";
-import axios from "../../../HYMall-master/src/network/axios";
+
 
 export function getDetail(iid) {
   return request({
@@ -27,6 +27,7 @@ export class Goods {
     this.columns = columns;
     this.services = services;
     this.nowPrice = itemInfo.highNowPrice;
+    this.realPrice = itemInfo.lowNowPrice;
   }
 }
 
