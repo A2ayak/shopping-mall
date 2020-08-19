@@ -36,15 +36,16 @@
 <style scoped>
   .bottom-bar {
     height: 49px;
-    /*position: fixed;*/
+    position: fixed;
     background-color: #fff;
-    /*left: 0;*/
-    /*right: 0;*/
-    /*bottom: 0;*/
-    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /*position: relative;*/
 
     display: flex;
     text-align: center;
+    /*z-index: 2;*/
   }
 
   .bar-item {

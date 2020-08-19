@@ -15,7 +15,7 @@
       <goods-list :goods="recommendInfo" ref="recommendInfo"/>
     </scroll>
     <back-top @click.native="backClick" v-show="isBackTopShow"/>
-    <detail-bottom-bar @selected="addToStore"/>
+    <detail-bottom-bar @selected="addToStore" class="bottom-bar"/>
   </div>
 </template>
 
@@ -33,7 +33,9 @@
   import BackTop from "components/content/backTop/BackTop";
   // import DetailRecommendInfo from "./childComps/DetailRecommendInfo";
   import GoodsList from "components/content/goods/GoodsList";
-  import {debounce} from '@/common/utils';
+
+  import { debounce } from '@/common/utils';
+  import { mapActions } from 'vuex'
 
 
 
@@ -118,6 +120,7 @@
       }, 500)
     },
     methods: {
+      ...mapActions(['addCart']), //方法从vuex映射
       titleClick(index) {
         this.$refs.scrollComp.scrollTo(0, -this.themeTops[index], 300)
       },
@@ -160,7 +163,14 @@
         selectedGoods.desc = this.goods.desc;
         selectedGoods.newPrice = this.goods.nowPrice;
         // 3.添加到Store中
-        this.$store.dispatch('addCart', selectedGoods)
+        // 3.1 映射方法写法用vuex的mapActions
+        this.addCart(selectedGoods).then(res => {
+          this.$toast.show(res, 2000)
+        })
+        // 3.2 通常dispatch的方法传到action
+        // this.$store.dispatch('addCart', selectedGoods).then(res => {
+        //   console.log(res);
+        // })
       }
     }
   }
@@ -177,4 +187,7 @@
     background-color: #fff;
     height: calc(100% - 44px - 49px);
   }
+  /*.bottom-bar {*/
+  /*  z-index: 2;*/
+  /*}*/
 </style>
